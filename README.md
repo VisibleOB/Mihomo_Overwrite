@@ -2,17 +2,33 @@
 
 我的个人 Mihomo (Clash Meta) 配置覆写脚本，根据个人使用需求优化的代理规则和DNS配置。
 
+## 🔗 快速使用
+
+### 📋 复制链接直接使用
+
+**通用主配置：**
+```
+https://raw.githubusercontent.com/VisibleOB/Mihomo_Overwrite/refs/heads/master/main_overwrite.js
+```
+
+**Clash Mi iOS 客户端专用配置：**
+```
+https://raw.githubusercontent.com/VisibleOB/Mihomo_Overwrite/refs/heads/master/clash_mi_overwrite.js
+```
+
+> 💡 点击代码块右上角的复制按钮，直接粘贴到客户端的覆写脚本URL中即可使用
+
 ## 📁 文件说明
 
-### `clash_mi_overwrite.js`
-我的主要配置覆写脚本，包含：
+### `main_overwrite.js`
+通用主配置覆写脚本
+
+### `clash_mi_overwrite.js` 
+Clash Mi iOS客户端专用配置覆写脚本，包含：
 - **智能代理分组** - 按地区自动分类节点（香港、台湾、日本、美国、新加坡）
 - **完善的规则集** - 包含广告拦截、应用净化、流媒体分流等
 - **优化的DNS配置** - 国内外DNS分流，提升解析速度
 - **游戏支持** - 针对我常玩的Nikke、BA等游戏的专门规则
-
-### `main_overwrite.js`
-备用的通用配置覆写脚本
 
 ## 🚀 功能特性
 
@@ -42,11 +58,22 @@
 
 ## 💻 个人使用方式
 
-1. 直接在Mihomo客户端中引用GitHub raw链接：
-   ```
-   https://raw.githubusercontent.com/VisibleOB/Mihomo_Overwrite/master/clash_mi_overwrite.js
-   ```
-2. 或下载到本地后设置覆写脚本路径
+### 📎 Raw地址链接
+
+在Mihomo客户端中直接引用以下GitHub raw链接：
+
+**通用主配置：**
+```
+https://raw.githubusercontent.com/VisibleOB/Mihomo_Overwrite/refs/heads/master/main_overwrite.js
+```
+
+**Clash Mi iOS 客户端专用配置：**
+```
+https://raw.githubusercontent.com/VisibleOB/Mihomo_Overwrite/refs/heads/master/clash_mi_overwrite.js
+```
+
+### 📥 本地使用
+也可以下载到本地后在客户端中设置覆写脚本路径
 
 > 注：这是我的个人配置，可能不适合所有用户的需求，建议根据自己的使用场景进行调整。
 
