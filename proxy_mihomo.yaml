@@ -1,0 +1,2055 @@
+proxy-providers:
+  main_proxy:
+    type: http
+    url: "示例" #todo
+    interval: 21600
+    path: ./download/main_proxy.yaml
+    proxy: DIRECT
+    size-limit: 0
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5000
+      lazy: true
+      expected-status: 204
+    override:
+      # 网络协议优化
+      udp: true # 启用UDP，支持QUIC等现代协议
+      tfo: false # 关闭TCP Fast Open，提高兼容性
+      mptcp: false # 关闭多路径TCP，避免连接问题
+      # IP版本偏好
+      ip-version: ipv4-prefer # 优先IPv4，目前大部分节点是IPv4
+      # 安全设置（根据需要调整）
+      skip-cert-verify: true # 大多数节点证书存在问题，关闭证书验证
+    # 过滤器配置
+    filter: "^(?!.*联系|.*官网|.*邮件|.*续费|.*问题).*$" # 排除包含联系信息的节点
+
+
+proxies: #todo
+  - name: 自搭-US落地
+    dialer-proxy: 前置代理-中转 # 这里为代理组里你使用的组的名称，假如使用的是“自动选择”，就写自动选择
+    type: socks5 # 代理类型
+    server: IP # 代理IP
+    port: 2333 # 代理端口
+    username: user # 代理账号
+    password: password # 代理密码
+
+
+mode: rule
+allow-lan: true
+bind-address: '*'
+ipv6: true
+log-level: warning
+find-process-mode: strict
+global-client-fingerprint: chrome
+unified-delay: true
+tcp-concurrent: true
+keep-alive-idle: 600
+keep-alive-interval: 15
+disable-keep-alive: false
+geodata-mode: true
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 48
+geox-url:
+  geoip: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat
+  geosite: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  mmdb: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+  asn: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports:
+        - 80
+        - 8080-8880
+      override-destination: true
+    TLS:
+      ports:
+        - 443
+        - 8443
+    QUIC:
+      ports:
+        - 443
+        - 8443
+  force-domain:
+    - +.v2ex.com
+  skip-domain:
+    - +.baidu.com
+    - +.bilibili.com
+tun:
+  enable: false
+  stack: mixed
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  strict-route: true
+  dns-hijack:
+    - 'any:53'
+    - 'tcp://any:53'
+  mtu: 1500
+  gso: true
+  gso-max-size: 65536
+  udp-timeout: 300
+profile:
+  store-selected: true
+  store-fake-ip: true
+dns:
+  enable: true
+  listen: '0.0.0.0:1053'
+  ipv6: true
+  prefer-h3: true
+  respect-rules: true
+  cache-algorithm: arc
+  cache-size: 2048
+  use-hosts: false
+  use-system-hosts: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'geosite:connectivity-check'
+    - 'geosite:private'
+    - '*.lan'
+    - '*.localdomain'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.local'
+    - '*.home.arpa'
+    - +.lan
+    - +.local
+    - +.msftconnecttest.com
+    - +.msftncsi.com
+    - localhost.ptlogin2.qq.com
+    - localhost.sec.qq.com
+    - localhost.work.weixin.qq.com
+    - +.qq.com
+    - +.tencent.com
+    - time.*.com
+    - time.*.gov
+    - time.*.edu.cn
+    - time.*.apple.com
+    - time-ios.apple.com
+    - time1.*.com
+    - time2.*.com
+    - time3.*.com
+    - time4.*.com
+    - time5.*.com
+    - time6.*.com
+    - time7.*.com
+    - time1.cloud.tencent.com
+    - ntp.*.com
+    - ntp1.*.com
+    - ntp2.*.com
+    - ntp3.*.com
+    - ntp4.*.com
+    - ntp5.*.com
+    - ntp6.*.com
+    - ntp7.*.com
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - +.pool.ntp.org
+    - music.163.com
+    - '*.music.163.com'
+    - '*.126.net'
+    - musicapi.taihe.com
+    - music.taihe.com
+    - songsearch.kugou.com
+    - trackercdn.kugou.com
+    - '*.kuwo.cn'
+    - api-jooxtt.sanook.com
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - '*.y.qq.com'
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - music.migu.cn
+    - +.srv.nintendo.net
+    - '*.n.n.srv.nintendo.net'
+    - +.cdn.nintendo.net
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - xbox.*.microsoft.com
+    - xnotify.xboxlive.com
+    - +.battlenet.com.cn
+    - +.wotgame.cn
+    - +.wggames.cn
+    - +.wowsgame.cn
+    - +.wargaming.net
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - ff.dorado.sdo.com
+    - +.ea.com
+    - +.respawn.com
+    - +.mihoyo.com
+    - stun.*.*
+    - stun.*.*.*
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - lens.l.google.com
+    - stun.l.google.com
+    - na.b.g-tun.com
+    - mesu.apple.com
+    - swscan.apple.com
+    - swquery.apple.com
+    - swdownload.apple.com
+    - swcdn.apple.com
+    - swdist.apple.com
+    - heartbeat.belkin.com
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - proxy.golang.org
+    - +.nflxvideo.net
+    - '*.mcdn.bilivideo.cn'
+    - +.media.dssott.com
+    - shark007.net
+    - MijiaCloud
+    - +.cmbchina.com
+    - +.cmbimg.com
+    - local.adguard.org
+    - +.sandai.net
+    - +.n0808.com
+    - +.uu.163.com
+    - ps.res.netease.com
+    - +.pub.3gppnetwork.org
+    - +.services.googleapis.cn
+    - +.xn--ngstr-lra8j.com
+    - +.googleapis.cn
+    - '*.docker.internal'
+    - host.docker.internal
+    - gateway.docker.internal
+    - +.internal
+    - '*.corp'
+    - '*.home'
+    - '*.dev'
+    - '*.test'
+    - '*.localhost'
+    - '*.local'
+    - 'geosite:category-games'
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - '*.y.qq.com'
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - music.migu.cn
+    - +.msftconnecttest.com
+    - +.msftncsi.com
+    - localhost.ptlogin2.qq.com
+    - localhost.sec.qq.com
+    - localhost.work.weixin.qq.com
+    - +.qq.com
+    - +.tencent.com
+    - +.srv.nintendo.net
+    - '*.n.n.srv.nintendo.net'
+    - +.cdn.nintendo.net
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - xbox.*.microsoft.com
+    - xnotify.xboxlive.com
+    - +.battlenet.com.cn
+    - +.wotgame.cn
+    - +.wggames.cn
+    - +.wowsgame.cn
+    - +.wargaming.net
+    - proxy.golang.org
+    - stun.*.*
+    - stun.*.*.*
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - heartbeat.belkin.com
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - mesu.apple.com
+    - swscan.apple.com
+    - swquery.apple.com
+    - swdownload.apple.com
+    - swcdn.apple.com
+    - swdist.apple.com
+    - lens.l.google.com
+    - stun.l.google.com
+    - na.b.g-tun.com
+    - +.nflxvideo.net
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - ff.dorado.sdo.com
+    - '*.mcdn.bilivideo.cn'
+    - +.media.dssott.com
+    - shark007.net
+    - MijiaCloud
+    - +.cmbchina.com
+    - +.cmbimg.com
+    - local.adguard.org
+    - +.sandai.net
+    - +.n0808.com
+    - +.uu.163.com
+    - ps.res.netease.com
+    - +.pub.3gppnetwork.org
+    - 'geosite:category-games'
+    - +.services.googleapis.cn
+    - +.xn--ngstr-lra8j.com
+    - +.mihoyo.com
+    - +.ea.com
+    - +.respawn.com
+    - +.googleapis.cn
+    - 'geosite:cn'
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 1.12.12.12
+    - 1.1.1.1
+    - 8.8.8.8
+  nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://1.12.12.12/dns-query'
+    - 'https://doh.pub/dns-query'
+    - 'https://doh.360.cn/dns-query'
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  proxy-server-nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://1.12.12.12/dns-query'
+    - 'https://doh.pub/dns-query'
+    - 'https://doh.360.cn/dns-query'
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  nameserver-policy:
+    'geosite:cn,private':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geo:cn':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geosite:geolocation-cn':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geosite:gfw':
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+    'geosite:geolocation-!cn':
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+    full-nameserver:
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+  fallback:
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.azure.com
+      - +.bing.com
+      - +.bingapis.com
+      - +.cloudflare.net
+      - +.docker.com
+      - +.docker.io
+      - +.facebook.com
+      - +.github.com
+      - +.githubusercontent.com
+      - +.google.com
+      - +.gstatic.com
+      - +.google.dev
+      - +.googleapis.cn
+      - +.googleapis.com
+      - +.googlevideo.com
+      - +.instagram.com
+      - +.meta.ai
+      - +.microsoft.com
+      - +.microsoftapp.net
+      - +.msn.com
+      - +.openai.com
+      - +.poe.com
+      - +.t.me
+      - +.twitter.com
+      - +.x.com
+      - +.youtube.com
+
+proxy-groups:
+  # 前置代理分组
+  - name: 前置代理-中转
+    type: select
+    use:
+      - main_proxy
+    
+
+  - name: 主要代理-落地
+    type: select
+    proxies:
+      - 自搭-US落地
+
+    
+  # 地区节点分组 - 香港
+  - name: 🇭🇰 香港-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*香港)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇭🇰 香港-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*香港)(?=.*家宽|.*原生).*$"
+    
+  - name: 🇭🇰 香港-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*香港)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇭🇰 香港-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*香港)(?=.*家宽|.*原生).*$"
+    
+  # 地区节点分组 - 台湾
+  - name: 🇹🇼 台湾-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*台湾|.*TW|.*Taiwan)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇹🇼 台湾-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*台湾|.*TW|.*Taiwan)(?=.*家宽|.*原生).*$"
+    
+  - name: 🇹🇼 台湾-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*台湾|.*TW|.*Taiwan)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇹🇼 台湾-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*台湾|.*TW|.*Taiwan)(?=.*家宽|.*原生).*$"
+    
+  # 地区节点分组 - 日本
+  - name: 🇯🇵 日本-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*日本|.*JP|.*Japan)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇯🇵 日本-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*日本|.*JP|.*Japan)(?=.*家宽|.*原生).*$"
+    
+  - name: 🇯🇵 日本-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://connectivitycheck.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*日本|.*JP|.*Japan)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇯🇵 日本-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://connectivitycheck.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*日本|.*JP|.*Japan)(?=.*家宽|.*原生).*$"
+    
+  # 地区节点分组 - 美国
+  - name: 🇺🇸 美国-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*美国|.*US|.*USA|.*America)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇺🇸 美国-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*美国|.*US|.*USA|.*America)(?=.*家宽|.*原生).*$"
+    
+  - name: 🇺🇸 美国-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*美国|.*US|.*USA|.*America)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇺🇸 美国-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*美国|.*US|.*USA|.*America)(?=.*家宽|.*原生).*$"
+    
+  # 地区节点分组 - 新加坡
+  - name: 🇸🇬 新加坡-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*新加坡|.*SG|.*Singapore)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇸🇬 新加坡-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?=.*新加坡|.*SG|.*Singapore)(?=.*家宽|.*原生).*$"
+    
+  - name: 🇸🇬 新加坡-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*新加坡|.*SG|.*Singapore)(?!.*家宽|.*原生).*$"
+    
+  - name: 🇸🇬 新加坡-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?=.*新加坡|.*SG|.*Singapore)(?=.*家宽|.*原生).*$"
+    
+  # 其他地区节点分组
+  - name: 🌍 其他地区-普通
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?!.*香港|.*台湾|.*日本|.*美国|.*新加坡|.*HK|.*TW|.*JP|.*US|.*SG|.*家宽|.*原生).*$"
+    
+  - name: 🌍 其他地区-家宽
+    type: select
+    use:
+      - main_proxy
+    filter: "^(?!.*香港|.*台湾|.*日本|.*美国|.*新加坡|.*HK|.*TW|.*JP|.*US|.*SG)(?=.*家宽|.*原生).*$"
+    
+  - name: 🌍 其他地区-普通-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?!.*香港|.*台湾|.*日本|.*美国|.*新加坡|.*HK|.*TW|.*JP|.*US|.*SG|.*家宽|.*原生).*$"
+    
+  - name: 🌍 其他地区-家宽-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "^(?!.*香港|.*台湾|.*日本|.*美国|.*新加坡|.*HK|.*TW|.*JP|.*US|.*SG)(?=.*家宽|.*原生).*$"
+    
+  # 自搭节点分组
+  - name: 🏠 自搭节点
+    type: select
+    use:
+      - main_proxy
+    filter: "自搭"
+    
+  - name: 🏠 自搭-自动选择
+    type: url-test
+    use:
+      - main_proxy
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    timeout: 5000
+    tolerance: 50
+    lazy: true
+    filter: "自搭"
+    
+  # 专属节点分组
+  - name: ⭐ 专属节点-1
+    type: select
+    use:
+      - main_proxy
+    
+  - name: ⭐ 专属节点-2
+    type: select
+    use:
+      - main_proxy
+    
+  # 主要功能分组
+  - name: 国内网站
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://www.baidu.com/favicon.ico'
+    
+  - name: 国外网站
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://www.bing.com/favicon.ico'
+    
+  - name: 被墙网站
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: SpeedTest
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  
+  - name: Cloudflare
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: Proxy
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+# 特殊用途分组  
+  - name: linux.do
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: Download
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: CnGameDownload
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: SteamCN
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: Steam
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Game
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: AI
+    type: select
+    proxies:
+      - DIRECT
+      - "🇭🇰 香港-普通"
+      - "🇭🇰 香港-家宽"
+      - "🇭🇰 香港-普通-自动选择"
+      - "🇭🇰 香港-家宽-自动选择"
+      - "🇹🇼 台湾-普通"
+      - "🇹🇼 台湾-家宽"
+      - "🇹🇼 台湾-普通-自动选择"
+      - "🇹🇼 台湾-家宽-自动选择"
+      - "🇯🇵 日本-普通"
+      - "🇯🇵 日本-家宽"
+      - "🇯🇵 日本-普通-自动选择"
+      - "🇯🇵 日本-家宽-自动选择"
+      - "🇺🇸 美国-普通"
+      - "🇺🇸 美国-家宽"
+      - "🇺🇸 美国-普通-自动选择"
+      - "🇺🇸 美国-家宽-自动选择"
+      - "🇸🇬 新加坡-普通"
+      - "🇸🇬 新加坡-家宽"
+      - "🇸🇬 新加坡-普通-自动选择"
+      - "🇸🇬 新加坡-家宽-自动选择"
+      - "🌍 其他地区-普通"
+      - "🌍 其他地区-家宽"
+      - "🌍 其他地区-普通-自动选择"
+      - "🌍 其他地区-家宽-自动选择"
+      - "🏠 自搭节点"
+      - "🏠 自搭-自动选择"
+      - "主要代理-落地"
+      - "⭐ 专属节点-1"
+      - "⭐ 专属节点-2"
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: GitHub
+    type: select
+    proxies:      
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: YouTube
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Google
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: OneDrive
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Microsoft
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: Discord
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+
+  - name: Twitch
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Anime
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Twitter
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Telegram
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Reddit
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: TikTok
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Netflix
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Facebook
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Disney
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  # 广告和隐私相关分组
+  - name: Ads
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+    url: 'https://cp.cloudflare.com/generate_204'
+  
+  - name: Privacy
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Hijacking
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+  - name: Trackerslist
+    type: select
+    proxies:
+      - DIRECT
+      - 🇭🇰 香港-普通
+      - 🇭🇰 香港-家宽
+      - 🇭🇰 香港-普通-自动选择
+      - 🇭🇰 香港-家宽-自动选择
+      - 🇹🇼 台湾-普通
+      - 🇹🇼 台湾-家宽
+      - 🇹🇼 台湾-普通-自动选择
+      - 🇹🇼 台湾-家宽-自动选择
+      - 🇯🇵 日本-普通
+      - 🇯🇵 日本-家宽
+      - 🇯🇵 日本-普通-自动选择
+      - 🇯🇵 日本-家宽-自动选择
+      - 🇺🇸 美国-普通
+      - 🇺🇸 美国-家宽
+      - 🇺🇸 美国-普通-自动选择
+      - 🇺🇸 美国-家宽-自动选择
+      - 🇸🇬 新加坡-普通
+      - 🇸🇬 新加坡-家宽
+      - 🇸🇬 新加坡-普通-自动选择
+      - 🇸🇬 新加坡-家宽-自动选择
+      - 🌍 其他地区-普通
+      - 🌍 其他地区-家宽
+      - 🌍 其他地区-普通-自动选择
+      - 🌍 其他地区-家宽-自动选择
+      - 🏠 自搭节点
+      - 🏠 自搭-自动选择
+      - 主要代理-落地
+      - ⭐ 专属节点-1
+      - ⭐ 专属节点-2
+    url: 'https://cp.cloudflare.com/generate_204'
+    
+rule-providers:
+  reject:
+    type: http
+    format: yaml
+    interval: 86400
+    behavior: domain
+    url: 'https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt'
+    path: ./ruleset/loyalsoldier/reject.yaml
+  cncidr:
+    type: http
+    format: yaml
+    interval: 86400
+    behavior: ipcidr
+    url: 'https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt'
+    path: ./ruleset/loyalsoldier/cncidr.yaml
+  direct:
+    type: http
+    format: yaml
+    interval: 86400
+    behavior: domain
+    url: 'https://fastly.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt'
+    path: ./ruleset/loyalsoldier/direct.yaml
+  Download-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Download/Download.yaml
+  SpeedTest-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Speedtest/Speedtest.yaml
+  AI-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: 'https://kelee.one/Tool/Clash/Rule/AI.yaml'
+  GitHub-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml
+  YouTube-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTube/YouTube.yaml
+  YouTube-rule-1:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTubeMusic/YouTubeMusic.yaml
+  Google-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Google/Google_No_Resolve.yaml
+  CnGameDownload-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/GameDownloadCN/GameDownloadCN.yaml
+  SteamCN-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/SteamCN/SteamCN.yaml
+  Steam-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Steam/Steam_No_Resolve.yaml
+  Game-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Game/Game.yaml
+  OneDrive-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OneDrive/OneDrive_No_Resolve.yaml
+  Microsoft-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft_No_Resolve.yaml
+  Discord-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Discord/Discord.yaml
+  Anime-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bahamut/Bahamut.yaml
+  Twitter-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Twitter/Twitter_No_Resolve.yaml
+  Telegram-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Telegram/Telegram_No_Resolve.yaml
+  Reddit-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: 'https://rule.kelee.one/Clash/Reddit.yaml'
+  TikTok-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/TikTok/TikTok_No_Resolve.yaml
+  Netflix-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix_No_Resolve.yaml
+  Facebook-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Facebook/Facebook_No_Resolve.yaml
+  Disney-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Disney/Disney_No_Resolve.yaml
+  AWAvenue_Ads_Rule-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main//Filters/AWAvenue-Ads-Rule-Clash.yaml
+  Blackmatrix7_Ads-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml
+  Privacy-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Privacy/Privacy.yaml
+  Hijacking-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hijacking/Hijacking.yaml
+  Trackerslist-rule:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: >-
+      https://github.com/DustinWin/ruleset_geodata/raw/refs/heads/mihomo-ruleset/trackerslist.mrs
+  Cloudflare-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Cloudflare/Cloudflare_No_Resolve.yaml
+  Proxy-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Proxy/Proxy_No_Resolve.yaml
+  Twitch-rule:
+    type: http
+    interval: 86400
+    behavior: classical
+    format: yaml
+    url: >-
+      https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Twitch/Twitch_No_Resolve.yaml
+rules:
+  - 'PROCESS-NAME,Gopeed,Download'
+  - 'PROCESS-NAME,gopeed.exe,Download'
+  - 'DOMAIN,steamcdn-a.akamaihd.net,DIRECT'
+  - 'DOMAIN-SUFFIX,steamserver.net,DIRECT'
+  - 'DOMAIN-SUFFIX,api.openrouter.ai,AI'
+  - 'DOMAIN-SUFFIX,openrouter.ai,AI'
+  - 'DOMAIN-SUFFIX,cursor.com,AI'
+  - 'DOMAIN-SUFFIX,cursor.sh,AI'
+  - 'DOMAIN-SUFFIX,cursor-cdn.com,AI'
+  - 'DOMAIN-SUFFIX,cursorapi.com,AI'
+  - 'DOMAIN-SUFFIX,windsurf.com,AI'
+  - 'DOMAIN-SUFFIX,codeium.com,AI'
+  - 'DOMAIN-SUFFIX,trae.ai,AI'
+  - 'DOMAIN-SUFFIX,byteoversea.com,AI'
+  - 'DOMAIN-SUFFIX,trae-api-sg.mchost.guru,AI'
+  - 'DOMAIN-SUFFIX,lf3-static.bytednsdoc.com,AI'
+  - 'DOMAIN-SUFFIX,bytegate-sg.byteintlapi.com,AI'
+  - 'DOMAIN-SUFFIX,abtestvm-sg.bytedance.com,AI'
+  - 'DOMAIN-SUFFIX,tron-sg.bytelemon.com,AI'
+  - 'DOMAIN-SUFFIX,sf16-short-sg.bytedapm.com,AI'
+  - 'DOMAIN-SUFFIX,trae.com.cn,AI'
+  - 'DOMAIN-SUFFIX,tron.jiyunhudong.com,AI'
+  - 'DOMAIN-SUFFIX,starling.zijieapi.com,AI'
+  - 'DOMAIN-SUFFIX,augmentcode.com,AI'
+  - 'DOMAIN-SUFFIX,kkrb.net,DIRECT'
+  - 'DOMAIN-SUFFIX,v2ex.com,被墙网站'
+  - 'DOMAIN-SUFFIX,nodeseek.com,被墙网站'
+  - 'DOMAIN-SUFFIX,mnapi.com,DIRECT'
+  - 'DOMAIN-SUFFIX,ieee.org,DIRECT'
+  - 'DOMAIN-SUFFIX,anrunnetwork.com,DIRECT'
+  - 'DOMAIN-SUFFIX,apifox.com,DIRECT'
+  - 'DOMAIN-SUFFIX,crond.dev,DIRECT'
+  - 'IP-CIDR,223.113.52.0/22,DIRECT,no-resolve'
+  - 'DOMAIN-SUFFIX,julebu.co,DIRECT'
+  - 'DOMAIN-SUFFIX,apple.com,DIRECT'
+  - 'DOMAIN-SUFFIX,icloud.com,DIRECT'
+  - 'DOMAIN-SUFFIX,cdn-apple.com,DIRECT'
+  - 'DOMAIN-SUFFIX,ls.apple.com,DIRECT'
+  - 'DOMAIN-SUFFIX,lingq.com,AI'
+  - 'DOMAIN-SUFFIX,youglish.com,AI'
+  - 'DOMAIN-SUFFIX,deepl.com,AI'
+  - 'DOMAIN-SUFFIX,chat.openai.com,AI'
+  - 'DOMAIN-SUFFIX,grammarly.com,AI'
+  - 'DOMAIN-KEYWORD,sci-hub,AI'
+  - 'DOMAIN-SUFFIX,edclub.com,被墙网站'
+  - 'DOMAIN-SUFFIX,typingclub.com,被墙网站'
+  - 'DOMAIN-SUFFIX,edclub-cdn.typingclub.com,被墙网站'
+  - 'DOMAIN-SUFFIX,typingclub-cdn.typingclub.com,被墙网站'
+  - 'DOMAIN-KEYWORD,typingclub,被墙网站'
+  - 'RULE-SET,Download-rule,Download'
+  - 'RULE-SET,SpeedTest-rule,SpeedTest'
+  - 'RULE-SET,AI-rule,AI'
+  - 'RULE-SET,GitHub-rule,GitHub'
+  - 'DOMAIN-SUFFIX,linux.do,linux.do'
+  - 'RULE-SET,YouTube-rule,YouTube'
+  - 'RULE-SET,YouTube-rule-1,YouTube'
+  - 'RULE-SET,Google-rule,Google'
+  - 'RULE-SET,CnGameDownload-rule,CnGameDownload'
+  - 'RULE-SET,SteamCN-rule,SteamCN'
+  - 'RULE-SET,Steam-rule,Steam'
+  - 'RULE-SET,Game-rule,Game'
+  - 'RULE-SET,OneDrive-rule,OneDrive'
+  - 'RULE-SET,Microsoft-rule,Microsoft'
+  - 'RULE-SET,Twitch-rule,Twitch'
+  - 'RULE-SET,Discord-rule,Discord'
+  - 'RULE-SET,Anime-rule,Anime'
+  - 'RULE-SET,Twitter-rule,Twitter'
+  - 'RULE-SET,Telegram-rule,Telegram'
+  - 'RULE-SET,Reddit-rule,Reddit'
+  - 'RULE-SET,TikTok-rule,TikTok'
+  - 'RULE-SET,Netflix-rule,Netflix'
+  - 'RULE-SET,Facebook-rule,Facebook'
+  - 'RULE-SET,Disney-rule,Disney'
+  - 'RULE-SET,AWAvenue_Ads_Rule-rule,Ads'
+  - 'RULE-SET,Blackmatrix7_Ads-rule,Ads'
+  - 'RULE-SET,Privacy-rule,Privacy'
+  - 'RULE-SET,Hijacking-rule,Hijacking'
+  - 'RULE-SET,Trackerslist-rule,Trackerslist'
+  - 'RULE-SET,Cloudflare-rule,Cloudflare'
+  - 'RULE-SET,Proxy-rule,Proxy'
+  - 'RULE-SET,cncidr,DIRECT,no-resolve'
+  - 'RULE-SET,direct,DIRECT'
+  - 'GEOSITE,gfw,被墙网站'
+  - 'GEOSITE,geolocation-!cn,被墙网站'
+  - 'GEOIP,CN,国内网站'
+  - 'MATCH,国外网站'
