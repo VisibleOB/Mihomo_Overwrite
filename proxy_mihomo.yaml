@@ -29,11 +29,10 @@ proxy-providers:
 proxies: #todo
   - name: 自搭-US落地
     dialer-proxy: 前置代理-中转 # 这里为代理组里你使用的组的名称，假如使用的是“自动选择”，就写自动选择
-    type: socks5 # 代理类型
+    type: "" # 代理类型
     server: IP # 代理IP
     port: 2333 # 代理端口
-    username: user # 代理账号
-    password: password # 代理密码
+
 
 
 mode: rule
