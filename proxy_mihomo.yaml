@@ -2,17 +2,9 @@ proxy-providers:
   main_proxy:
     type: http
     url: "示例" #todo
-    interval: 21600
+    interval: 3600
     path: ./download/main_proxy.yaml
-    proxy: 国外网站 
     size-limit: 0
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
-      timeout: 5000
-      lazy: true
-      expected-status: 204
     override:
       # 网络协议优化
       udp: true # 启用UDP，支持QUIC等现代协议
@@ -25,449 +17,25 @@ proxy-providers:
     # 过滤器配置
     filter: "^(?!.*联系|.*官网|.*邮件|.*续费|.*问题).*$" # 排除包含联系信息的节点
 
+  dialer_proxy:
+    type: http
+    url: "示例" #todo
+    interval: 3600
+    path: ./download/dialer_proxy.yaml
+    size-limit: 0
+    override:
+      dialer-proxy: 前置代理-中转 # 这里为代理组里你使用的组的名称，假如使用的是“自动选择”，就写自动选择
+      # 网络协议优化
+      udp: true # 启用UDP，支持QUIC等现代协议
+      tfo: false # 关闭TCP Fast Open，提高兼容性
+      mptcp: false # 关闭多路径TCP，避免连接问题
+      # IP版本偏好
+      ip-version: ipv4-prefer # 优先IPv4，目前大部分节点是IPv4
+      # 安全设置（根据需要调整）
+      skip-cert-verify: true # 大多数节点证书存在问题，关闭证书验证
+    # 过滤器配置
+    filter: "^(?!.*联系|.*官网|.*邮件|.*续费|.*问题).*$" # 排除包含联系信息的节点
 
-proxies: #todo
-  - name: 自搭-US落地
-    dialer-proxy: 前置代理-中转 # 这里为代理组里你使用的组的名称，假如使用的是“自动选择”，就写自动选择
-    type: "" # 代理类型
-    server: IP # 代理IP
-    port: 2333 # 代理端口
-
-
-
-mode: rule
-allow-lan: true
-bind-address: '*'
-ipv6: true
-log-level: warning
-find-process-mode: strict
-global-client-fingerprint: chrome
-unified-delay: true
-tcp-concurrent: true
-keep-alive-idle: 600
-keep-alive-interval: 15
-disable-keep-alive: false
-geodata-mode: true
-geodata-loader: memconservative
-geo-auto-update: true
-geo-update-interval: 48
-geox-url:
-  geoip: >-
-    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat
-  geosite: >-
-    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
-  mmdb: >-
-    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
-  asn: >-
-    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb
-sniffer:
-  enable: true
-  sniff:
-    HTTP:
-      ports:
-        - 80
-        - 8080-8880
-      override-destination: true
-    TLS:
-      ports:
-        - 443
-        - 8443
-    QUIC:
-      ports:
-        - 443
-        - 8443
-  force-domain:
-    - +.v2ex.com
-  skip-domain:
-    - +.baidu.com
-    - +.bilibili.com
-tun:
-  enable: false
-  stack: mixed
-  auto-route: true
-  auto-redirect: true
-  auto-detect-interface: true
-  strict-route: true
-  dns-hijack:
-    - 'any:53'
-    - 'tcp://any:53'
-  mtu: 1500
-  gso: true
-  gso-max-size: 65536
-  udp-timeout: 300
-profile:
-  store-selected: true
-  store-fake-ip: true
-dns:
-  enable: true
-  listen: '0.0.0.0:1053'
-  ipv6: true
-  prefer-h3: true
-  respect-rules: true
-  cache-algorithm: arc
-  cache-size: 2048
-  use-hosts: false
-  use-system-hosts: false
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  fake-ip-filter:
-    - 'geosite:connectivity-check'
-    - 'geosite:private'
-    - '*.lan'
-    - '*.localdomain'
-    - '*.example'
-    - '*.invalid'
-    - '*.localhost'
-    - '*.test'
-    - '*.local'
-    - '*.home.arpa'
-    - +.lan
-    - +.local
-    - +.msftconnecttest.com
-    - +.msftncsi.com
-    - localhost.ptlogin2.qq.com
-    - localhost.sec.qq.com
-    - localhost.work.weixin.qq.com
-    - +.qq.com
-    - +.tencent.com
-    - time.*.com
-    - time.*.gov
-    - time.*.edu.cn
-    - time.*.apple.com
-    - time-ios.apple.com
-    - time1.*.com
-    - time2.*.com
-    - time3.*.com
-    - time4.*.com
-    - time5.*.com
-    - time6.*.com
-    - time7.*.com
-    - time1.cloud.tencent.com
-    - ntp.*.com
-    - ntp1.*.com
-    - ntp2.*.com
-    - ntp3.*.com
-    - ntp4.*.com
-    - ntp5.*.com
-    - ntp6.*.com
-    - ntp7.*.com
-    - '*.time.edu.cn'
-    - '*.ntp.org.cn'
-    - +.pool.ntp.org
-    - music.163.com
-    - '*.music.163.com'
-    - '*.126.net'
-    - musicapi.taihe.com
-    - music.taihe.com
-    - songsearch.kugou.com
-    - trackercdn.kugou.com
-    - '*.kuwo.cn'
-    - api-jooxtt.sanook.com
-    - api.joox.com
-    - joox.com
-    - y.qq.com
-    - '*.y.qq.com'
-    - streamoc.music.tc.qq.com
-    - mobileoc.music.tc.qq.com
-    - isure.stream.qqmusic.qq.com
-    - dl.stream.qqmusic.qq.com
-    - aqqmusic.tc.qq.com
-    - amobile.music.tc.qq.com
-    - '*.xiami.com'
-    - '*.music.migu.cn'
-    - music.migu.cn
-    - +.srv.nintendo.net
-    - '*.n.n.srv.nintendo.net'
-    - +.cdn.nintendo.net
-    - +.stun.playstation.net
-    - xbox.*.*.microsoft.com
-    - '*.*.xboxlive.com'
-    - xbox.*.microsoft.com
-    - xnotify.xboxlive.com
-    - +.battlenet.com.cn
-    - +.wotgame.cn
-    - +.wggames.cn
-    - +.wowsgame.cn
-    - +.wargaming.net
-    - '*.square-enix.com'
-    - '*.finalfantasyxiv.com'
-    - '*.ffxiv.com'
-    - '*.ff14.sdo.com'
-    - ff.dorado.sdo.com
-    - +.ea.com
-    - +.respawn.com
-    - +.mihoyo.com
-    - stun.*.*
-    - stun.*.*.*
-    - +.stun.*.*
-    - +.stun.*.*.*
-    - +.stun.*.*.*.*
-    - +.stun.*.*.*.*.*
-    - lens.l.google.com
-    - stun.l.google.com
-    - na.b.g-tun.com
-    - mesu.apple.com
-    - swscan.apple.com
-    - swquery.apple.com
-    - swdownload.apple.com
-    - swcdn.apple.com
-    - swdist.apple.com
-    - heartbeat.belkin.com
-    - '*.linksys.com'
-    - '*.linksyssmartwifi.com'
-    - '*.router.asus.com'
-    - proxy.golang.org
-    - +.nflxvideo.net
-    - '*.mcdn.bilivideo.cn'
-    - +.media.dssott.com
-    - shark007.net
-    - MijiaCloud
-    - +.cmbchina.com
-    - +.cmbimg.com
-    - local.adguard.org
-    - +.sandai.net
-    - +.n0808.com
-    - +.uu.163.com
-    - ps.res.netease.com
-    - +.pub.3gppnetwork.org
-    - +.services.googleapis.cn
-    - +.xn--ngstr-lra8j.com
-    - +.googleapis.cn
-    - '*.docker.internal'
-    - host.docker.internal
-    - gateway.docker.internal
-    - +.internal
-    - '*.corp'
-    - '*.home'
-    - '*.dev'
-    - '*.test'
-    - '*.localhost'
-    - '*.local'
-    - 'geosite:category-games'
-    - api.joox.com
-    - joox.com
-    - y.qq.com
-    - '*.y.qq.com'
-    - streamoc.music.tc.qq.com
-    - mobileoc.music.tc.qq.com
-    - isure.stream.qqmusic.qq.com
-    - dl.stream.qqmusic.qq.com
-    - aqqmusic.tc.qq.com
-    - amobile.music.tc.qq.com
-    - '*.xiami.com'
-    - '*.music.migu.cn'
-    - music.migu.cn
-    - +.msftconnecttest.com
-    - +.msftncsi.com
-    - localhost.ptlogin2.qq.com
-    - localhost.sec.qq.com
-    - localhost.work.weixin.qq.com
-    - +.qq.com
-    - +.tencent.com
-    - +.srv.nintendo.net
-    - '*.n.n.srv.nintendo.net'
-    - +.cdn.nintendo.net
-    - +.stun.playstation.net
-    - xbox.*.*.microsoft.com
-    - '*.*.xboxlive.com'
-    - xbox.*.microsoft.com
-    - xnotify.xboxlive.com
-    - +.battlenet.com.cn
-    - +.wotgame.cn
-    - +.wggames.cn
-    - +.wowsgame.cn
-    - +.wargaming.net
-    - proxy.golang.org
-    - stun.*.*
-    - stun.*.*.*
-    - +.stun.*.*
-    - +.stun.*.*.*
-    - +.stun.*.*.*.*
-    - +.stun.*.*.*.*.*
-    - heartbeat.belkin.com
-    - '*.linksys.com'
-    - '*.linksyssmartwifi.com'
-    - '*.router.asus.com'
-    - mesu.apple.com
-    - swscan.apple.com
-    - swquery.apple.com
-    - swdownload.apple.com
-    - swcdn.apple.com
-    - swdist.apple.com
-    - lens.l.google.com
-    - stun.l.google.com
-    - na.b.g-tun.com
-    - +.nflxvideo.net
-    - '*.square-enix.com'
-    - '*.finalfantasyxiv.com'
-    - '*.ffxiv.com'
-    - '*.ff14.sdo.com'
-    - ff.dorado.sdo.com
-    - '*.mcdn.bilivideo.cn'
-    - +.media.dssott.com
-    - shark007.net
-    - MijiaCloud
-    - +.cmbchina.com
-    - +.cmbimg.com
-    - local.adguard.org
-    - +.sandai.net
-    - +.n0808.com
-    - +.uu.163.com
-    - ps.res.netease.com
-    - +.pub.3gppnetwork.org
-    - 'geosite:category-games'
-    - +.services.googleapis.cn
-    - +.xn--ngstr-lra8j.com
-    - +.mihoyo.com
-    - +.ea.com
-    - +.respawn.com
-    - +.googleapis.cn
-    - 'geosite:cn'
-  default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 1.12.12.12
-    - 1.1.1.1
-    - 8.8.8.8
-  nameserver:
-    - 'https://dns.alidns.com/dns-query'
-    - 'https://1.12.12.12/dns-query'
-    - 'https://doh.pub/dns-query'
-    - 'https://doh.360.cn/dns-query'
-    - 'https://1.1.1.1/dns-query'
-    - 'https://1.0.0.1/dns-query'
-    - 'https://208.67.222.222/dns-query'
-    - 'https://208.67.220.220/dns-query'
-    - 'https://194.242.2.2/dns-query'
-    - 'https://194.242.2.3/dns-query'
-    - 'https://dns.google/dns-query'
-    - 'https://8.8.8.8/dns-query'
-  proxy-server-nameserver:
-    - 'https://dns.alidns.com/dns-query'
-    - 'https://1.12.12.12/dns-query'
-    - 'https://doh.pub/dns-query'
-    - 'https://doh.360.cn/dns-query'
-    - 'https://1.1.1.1/dns-query'
-    - 'https://1.0.0.1/dns-query'
-    - 'https://208.67.222.222/dns-query'
-    - 'https://208.67.220.220/dns-query'
-    - 'https://194.242.2.2/dns-query'
-    - 'https://194.242.2.3/dns-query'
-    - 'https://dns.google/dns-query'
-    - 'https://8.8.8.8/dns-query'
-  nameserver-policy:
-    '+.tmall.com': 223.5.5.5
-    '+.taobao.com': 223.5.5.5
-    '+.alicdn.com': 223.5.5.5
-    '+.aliyun.com': 223.5.5.5
-    '+.alipay.com': 223.5.5.5
-    '+.alibaba.com': 223.5.5.5
-    '+.qq.com': 119.29.29.29
-    '+.tencent.com': 119.29.29.29
-    '+.weixin.com': 119.29.29.29
-    '+.qpic.cn': 119.29.29.29
-    '+.jd.com': 119.29.29.29
-    '+.bilibili.com': 119.29.29.29
-    '+.hdslb.com': 119.29.29.29
-    '+.163.com': 119.29.29.29
-    '+.126.com': 119.29.29.29
-    '+.126.net': 119.29.29.29
-    '+.127.net': 119.29.29.29
-    '+.netease.com': 119.29.29.29
-    '+.baidu.com': 223.5.5.5
-    '+.bdstatic.com': 223.5.5.5
-    '+.bilivideo.+': 119.29.29.29
-    '+.iqiyi.com': 119.29.29.29
-    '+.douyinvod.com': 180.184.1.1
-    '+.douyin.com': 180.184.1.1
-    '+.douyincdn.com': 180.184.1.1
-    '+.douyinpic.com': 180.184.1.1
-    '+.feishu.cn': 180.184.1.1
-    'geosite:cn,private':
-      - 'https://dns.alidns.com/dns-query'
-      - 'https://1.12.12.12/dns-query'
-      - 'https://doh.pub/dns-query'
-      - 'https://doh.360.cn/dns-query'
-    'geo:cn':
-      - 'https://dns.alidns.com/dns-query'
-      - 'https://1.12.12.12/dns-query'
-      - 'https://doh.pub/dns-query'
-      - 'https://doh.360.cn/dns-query'
-    'geosite:geolocation-cn':
-      - 'https://dns.alidns.com/dns-query'
-      - 'https://1.12.12.12/dns-query'
-      - 'https://doh.pub/dns-query'
-      - 'https://doh.360.cn/dns-query'
-    'geosite:gfw':
-      - 'https://1.1.1.1/dns-query'
-      - 'https://1.0.0.1/dns-query'
-      - 'https://208.67.222.222/dns-query'
-      - 'https://208.67.220.220/dns-query'
-      - 'https://194.242.2.2/dns-query'
-      - 'https://194.242.2.3/dns-query'
-      - 'https://dns.google/dns-query'
-      - 'https://8.8.8.8/dns-query'
-    'geosite:geolocation-!cn':
-      - 'https://1.1.1.1/dns-query'
-      - 'https://1.0.0.1/dns-query'
-      - 'https://208.67.222.222/dns-query'
-      - 'https://208.67.220.220/dns-query'
-      - 'https://194.242.2.2/dns-query'
-      - 'https://194.242.2.3/dns-query'
-      - 'https://dns.google/dns-query'
-      - 'https://8.8.8.8/dns-query'
-    full-nameserver:
-      - 'https://1.1.1.1/dns-query'
-      - 'https://1.0.0.1/dns-query'
-      - 'https://208.67.222.222/dns-query'
-      - 'https://208.67.220.220/dns-query'
-      - 'https://194.242.2.2/dns-query'
-      - 'https://194.242.2.3/dns-query'
-      - 'https://dns.google/dns-query'
-      - 'https://8.8.8.8/dns-query'
-  fallback:
-    - 'https://1.1.1.1/dns-query'
-    - 'https://1.0.0.1/dns-query'
-    - 'https://208.67.222.222/dns-query'
-    - 'https://208.67.220.220/dns-query'
-    - 'https://194.242.2.2/dns-query'
-    - 'https://194.242.2.3/dns-query'
-    - 'https://dns.google/dns-query'
-    - 'https://8.8.8.8/dns-query'
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
-    geosite:
-      - gfw
-    ipcidr:
-      - 240.0.0.0/4
-    domain:
-      - +.azure.com
-      - +.bing.com
-      - +.bingapis.com
-      - +.cloudflare.net
-      - +.docker.com
-      - +.docker.io
-      - +.facebook.com
-      - +.github.com
-      - +.githubusercontent.com
-      - +.google.com
-      - +.gstatic.com
-      - +.google.dev
-      - +.googleapis.cn
-      - +.googleapis.com
-      - +.googlevideo.com
-      - +.instagram.com
-      - +.meta.ai
-      - +.microsoft.com
-      - +.microsoftapp.net
-      - +.msn.com
-      - +.openai.com
-      - +.poe.com
-      - +.t.me
-      - +.twitter.com
-      - +.x.com
-      - +.youtube.com
 
 proxy-groups:
   # 前置代理分组
@@ -476,13 +44,11 @@ proxy-groups:
     use:
       - main_proxy
     
-
   - name: 主要代理-落地
     type: select
-    proxies:
-      - 自搭-US落地
+    use:
+      - dialer_proxy
 
-    
   # 地区节点分组 - 香港
   - name: 🇭🇰 香港-普通
     type: select
@@ -1761,7 +1327,441 @@ proxy-groups:
       - ⭐ 专属节点-1
       - ⭐ 专属节点-2
     url: 'https://cp.cloudflare.com/generate_204'
-    
+
+mode: rule
+allow-lan: true
+bind-address: '*'
+ipv6: true
+log-level: warning
+find-process-mode: strict
+global-client-fingerprint: chrome
+unified-delay: true
+tcp-concurrent: true
+keep-alive-idle: 600
+keep-alive-interval: 15
+disable-keep-alive: false
+geodata-mode: true
+geodata-loader: memconservative
+geo-auto-update: true
+geo-update-interval: 48
+geox-url:
+  geoip: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.dat
+  geosite: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  mmdb: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.metadb
+  asn: >-
+    https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports:
+        - 80
+        - 8080-8880
+      override-destination: true
+    TLS:
+      ports:
+        - 443
+        - 8443
+    QUIC:
+      ports:
+        - 443
+        - 8443
+  force-domain:
+    - +.v2ex.com
+  skip-domain:
+    - +.baidu.com
+    - +.bilibili.com
+tun:
+  enable: false
+  stack: mixed
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  strict-route: true
+  dns-hijack:
+    - 'any:53'
+    - 'tcp://any:53'
+  mtu: 1500
+  gso: true
+  gso-max-size: 65536
+  udp-timeout: 300
+profile:
+  store-selected: true
+  store-fake-ip: true
+dns:
+  enable: true
+  listen: '0.0.0.0:1053'
+  ipv6: true
+  prefer-h3: true
+  respect-rules: true
+  cache-algorithm: arc
+  cache-size: 2048
+  use-hosts: false
+  use-system-hosts: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - 'geosite:connectivity-check'
+    - 'geosite:private'
+    - '*.lan'
+    - '*.localdomain'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
+    - '*.local'
+    - '*.home.arpa'
+    - +.lan
+    - +.local
+    - +.msftconnecttest.com
+    - +.msftncsi.com
+    - localhost.ptlogin2.qq.com
+    - localhost.sec.qq.com
+    - localhost.work.weixin.qq.com
+    - +.qq.com
+    - +.tencent.com
+    - time.*.com
+    - time.*.gov
+    - time.*.edu.cn
+    - time.*.apple.com
+    - time-ios.apple.com
+    - time1.*.com
+    - time2.*.com
+    - time3.*.com
+    - time4.*.com
+    - time5.*.com
+    - time6.*.com
+    - time7.*.com
+    - time1.cloud.tencent.com
+    - ntp.*.com
+    - ntp1.*.com
+    - ntp2.*.com
+    - ntp3.*.com
+    - ntp4.*.com
+    - ntp5.*.com
+    - ntp6.*.com
+    - ntp7.*.com
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - +.pool.ntp.org
+    - music.163.com
+    - '*.music.163.com'
+    - '*.126.net'
+    - musicapi.taihe.com
+    - music.taihe.com
+    - songsearch.kugou.com
+    - trackercdn.kugou.com
+    - '*.kuwo.cn'
+    - api-jooxtt.sanook.com
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - '*.y.qq.com'
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - music.migu.cn
+    - +.srv.nintendo.net
+    - '*.n.n.srv.nintendo.net'
+    - +.cdn.nintendo.net
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - xbox.*.microsoft.com
+    - xnotify.xboxlive.com
+    - +.battlenet.com.cn
+    - +.wotgame.cn
+    - +.wggames.cn
+    - +.wowsgame.cn
+    - +.wargaming.net
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - ff.dorado.sdo.com
+    - +.ea.com
+    - +.respawn.com
+    - +.mihoyo.com
+    - stun.*.*
+    - stun.*.*.*
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - lens.l.google.com
+    - stun.l.google.com
+    - na.b.g-tun.com
+    - mesu.apple.com
+    - swscan.apple.com
+    - swquery.apple.com
+    - swdownload.apple.com
+    - swcdn.apple.com
+    - swdist.apple.com
+    - heartbeat.belkin.com
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - proxy.golang.org
+    - +.nflxvideo.net
+    - '*.mcdn.bilivideo.cn'
+    - +.media.dssott.com
+    - shark007.net
+    - MijiaCloud
+    - +.cmbchina.com
+    - +.cmbimg.com
+    - local.adguard.org
+    - +.sandai.net
+    - +.n0808.com
+    - +.uu.163.com
+    - ps.res.netease.com
+    - +.pub.3gppnetwork.org
+    - +.services.googleapis.cn
+    - +.xn--ngstr-lra8j.com
+    - +.googleapis.cn
+    - '*.docker.internal'
+    - host.docker.internal
+    - gateway.docker.internal
+    - +.internal
+    - '*.corp'
+    - '*.home'
+    - '*.dev'
+    - '*.test'
+    - '*.localhost'
+    - '*.local'
+    - 'geosite:category-games'
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - '*.y.qq.com'
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - music.migu.cn
+    - +.msftconnecttest.com
+    - +.msftncsi.com
+    - localhost.ptlogin2.qq.com
+    - localhost.sec.qq.com
+    - localhost.work.weixin.qq.com
+    - +.qq.com
+    - +.tencent.com
+    - +.srv.nintendo.net
+    - '*.n.n.srv.nintendo.net'
+    - +.cdn.nintendo.net
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - xbox.*.microsoft.com
+    - xnotify.xboxlive.com
+    - +.battlenet.com.cn
+    - +.wotgame.cn
+    - +.wggames.cn
+    - +.wowsgame.cn
+    - +.wargaming.net
+    - proxy.golang.org
+    - stun.*.*
+    - stun.*.*.*
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - heartbeat.belkin.com
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - mesu.apple.com
+    - swscan.apple.com
+    - swquery.apple.com
+    - swdownload.apple.com
+    - swcdn.apple.com
+    - swdist.apple.com
+    - lens.l.google.com
+    - stun.l.google.com
+    - na.b.g-tun.com
+    - +.nflxvideo.net
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - ff.dorado.sdo.com
+    - '*.mcdn.bilivideo.cn'
+    - +.media.dssott.com
+    - shark007.net
+    - MijiaCloud
+    - +.cmbchina.com
+    - +.cmbimg.com
+    - local.adguard.org
+    - +.sandai.net
+    - +.n0808.com
+    - +.uu.163.com
+    - ps.res.netease.com
+    - +.pub.3gppnetwork.org
+    - 'geosite:category-games'
+    - +.services.googleapis.cn
+    - +.xn--ngstr-lra8j.com
+    - +.mihoyo.com
+    - +.ea.com
+    - +.respawn.com
+    - +.googleapis.cn
+    - 'geosite:cn'
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 1.12.12.12
+    - 1.1.1.1
+    - 8.8.8.8
+  nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://1.12.12.12/dns-query'
+    - 'https://doh.pub/dns-query'
+    - 'https://doh.360.cn/dns-query'
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  proxy-server-nameserver:
+    - 'https://dns.alidns.com/dns-query'
+    - 'https://1.12.12.12/dns-query'
+    - 'https://doh.pub/dns-query'
+    - 'https://doh.360.cn/dns-query'
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  nameserver-policy:
+    '+.tmall.com': 223.5.5.5
+    '+.taobao.com': 223.5.5.5
+    '+.alicdn.com': 223.5.5.5
+    '+.aliyun.com': 223.5.5.5
+    '+.alipay.com': 223.5.5.5
+    '+.alibaba.com': 223.5.5.5
+    '+.qq.com': 119.29.29.29
+    '+.tencent.com': 119.29.29.29
+    '+.weixin.com': 119.29.29.29
+    '+.qpic.cn': 119.29.29.29
+    '+.jd.com': 119.29.29.29
+    '+.bilibili.com': 119.29.29.29
+    '+.hdslb.com': 119.29.29.29
+    '+.163.com': 119.29.29.29
+    '+.126.com': 119.29.29.29
+    '+.126.net': 119.29.29.29
+    '+.127.net': 119.29.29.29
+    '+.netease.com': 119.29.29.29
+    '+.baidu.com': 223.5.5.5
+    '+.bdstatic.com': 223.5.5.5
+    '+.bilivideo.+': 119.29.29.29
+    '+.iqiyi.com': 119.29.29.29
+    '+.douyinvod.com': 180.184.1.1
+    '+.douyin.com': 180.184.1.1
+    '+.douyincdn.com': 180.184.1.1
+    '+.douyinpic.com': 180.184.1.1
+    '+.feishu.cn': 180.184.1.1
+    'geosite:cn,private':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geo:cn':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geosite:geolocation-cn':
+      - 'https://dns.alidns.com/dns-query'
+      - 'https://1.12.12.12/dns-query'
+      - 'https://doh.pub/dns-query'
+      - 'https://doh.360.cn/dns-query'
+    'geosite:gfw':
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+    'geosite:geolocation-!cn':
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+    full-nameserver:
+      - 'https://1.1.1.1/dns-query'
+      - 'https://1.0.0.1/dns-query'
+      - 'https://208.67.222.222/dns-query'
+      - 'https://208.67.220.220/dns-query'
+      - 'https://194.242.2.2/dns-query'
+      - 'https://194.242.2.3/dns-query'
+      - 'https://dns.google/dns-query'
+      - 'https://8.8.8.8/dns-query'
+  fallback:
+    - 'https://1.1.1.1/dns-query'
+    - 'https://1.0.0.1/dns-query'
+    - 'https://208.67.222.222/dns-query'
+    - 'https://208.67.220.220/dns-query'
+    - 'https://194.242.2.2/dns-query'
+    - 'https://194.242.2.3/dns-query'
+    - 'https://dns.google/dns-query'
+    - 'https://8.8.8.8/dns-query'
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.azure.com
+      - +.bing.com
+      - +.bingapis.com
+      - +.cloudflare.net
+      - +.docker.com
+      - +.docker.io
+      - +.facebook.com
+      - +.github.com
+      - +.githubusercontent.com
+      - +.google.com
+      - +.gstatic.com
+      - +.google.dev
+      - +.googleapis.cn
+      - +.googleapis.com
+      - +.googlevideo.com
+      - +.instagram.com
+      - +.meta.ai
+      - +.microsoft.com
+      - +.microsoftapp.net
+      - +.msn.com
+      - +.openai.com
+      - +.poe.com
+      - +.t.me
+      - +.twitter.com
+      - +.x.com
+      - +.youtube.com
+
 rule-providers:
   reject:
     type: http
@@ -1992,7 +1992,25 @@ rule-providers:
     format: yaml
     url: >-
       https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/rule/Clash/Twitch/Twitch_No_Resolve.yaml
+
 rules:
+  - 'IP-CIDR,0.0.0.0/8,DIRECT'
+  - 'IP-CIDR,10.0.0.0/8,DIRECT'
+  - 'IP-CIDR,100.64.0.0/10,DIRECT'
+  - 'IP-CIDR,127.0.0.0/8,DIRECT'
+  - 'IP-CIDR,169.254.0.0/16,DIRECT'
+  - 'IP-CIDR,172.16.0.0/12,DIRECT'
+  - 'IP-CIDR,192.0.0.0/24,DIRECT'
+  - 'IP-CIDR,192.0.2.0/24,DIRECT'
+  - 'IP-CIDR,192.88.99.0/24,DIRECT'
+  - 'IP-CIDR,192.168.0.0/16,DIRECT'
+  - 'IP-CIDR,198.18.0.0/15,DIRECT'
+  - 'IP-CIDR,198.51.100.0/24,DIRECT'
+  - 'IP-CIDR,203.0.113.0/24,DIRECT'
+  - 'IP-CIDR,224.0.0.0/3,DIRECT'
+  - 'IP-CIDR,::1/128,DIRECT'
+  - 'IP-CIDR,fc00::/7,DIRECT'
+  - 'IP-CIDR,fe80::/10,DIRECT'
   - 'PROCESS-NAME,Gopeed,Download'
   - 'PROCESS-NAME,gopeed.exe,Download'
   - 'DOMAIN,steamcdn-a.akamaihd.net,DIRECT'
